@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.naver.maps.map.MapFragment;
-import com.naver.maps.map.MapView;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.o3dr.android.client.ControlTower;
@@ -29,8 +28,8 @@ import com.o3dr.services.android.lib.drone.attribute.AttributeType;
 import com.o3dr.services.android.lib.drone.companion.solo.SoloAttributes;
 import com.o3dr.services.android.lib.drone.companion.solo.SoloState;
 import com.o3dr.services.android.lib.drone.connection.ConnectionParameter;
-import com.o3dr.services.android.lib.drone.connection.ConnectionType;
 import com.o3dr.services.android.lib.drone.property.Altitude;
+import com.o3dr.services.android.lib.drone.property.Battery;
 import com.o3dr.services.android.lib.drone.property.Speed;
 import com.o3dr.services.android.lib.drone.property.State;
 import com.o3dr.services.android.lib.drone.property.Type;
@@ -197,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
                 break;
 
             case AttributeEvent.BATTERY_UPDATED:
+                updateBattery();
 
             default:
                 // Log.i("DRONE_EVENT", event); //Uncomment to see events from the drone
@@ -228,6 +228,12 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         TextView altitudeView = (TextView) findViewById(R.id.valueAltitude);
         Altitude droneAltitude = this.drone.getAttribute(AttributeType.ALTITUDE);
         altitudeView.setText(String.format("%3.1f", droneAltitude.getAltitude()) + "m");
+    }
+
+    protected void updateBattery(){
+        TextView batteryView = (TextView) findViewById(R.id.valueVolt);
+        Battery droneBattery = this.drone.getAttribute(AttributeType.BATTERY);
+        batteryView.setText(String.format("%3.1f", droneBattery.getBatteryVoltage()) + "V");
     }
 
     private void checkSoloState() {
