@@ -1,4 +1,4 @@
-package com.viasofts.mygcs;
+package com.LSH.mygcs;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

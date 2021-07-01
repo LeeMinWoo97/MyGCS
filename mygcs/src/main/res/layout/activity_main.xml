@@ -6,11 +6,176 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <fragment
+        android:id="@+id/map"
+        android:name="com.naver.maps.map.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="-206dp"
+        tools:layout_editor_absoluteY="16dp" />
+0
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:background="#151515"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/map"
+        app:layout_constraintStart_toStartOf="@+id/map"
+        app:layout_constraintTop_toTopOf="@+id/map">
+
+        <TextView
+            android:id="@+id/notthing"
+            android:layout_width="0sp"
+            android:layout_height="0sp"
+            android:layout_weight="2"
+            android:text="0" />
+
+        <TextView
+            android:id="@+id/textVolt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="전압"
+            android:layout_gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/valueVolt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="0.0V"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="0sp"
+            android:layout_height="0sp"
+            android:layout_weight="1"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/textMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="비행모드"
+            android:layout_gravity="center"/>
+
+        <Spinner
+            android:id="@+id/modeSelector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_gravity="center"
+            android:spinnerMode="dropdown"/>
+
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="0sp"
+            android:layout_height="0sp"
+            android:layout_weight="1"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/textAltitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="고도"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/valueAltitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="0m"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="0sp"
+            android:layout_height="0sp"
+            android:layout_weight="1"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/textSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="속도"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/valueSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="0m/s"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/textView19"
+            android:layout_width="0sp"
+            android:layout_height="0sp"
+            android:layout_weight="1"
+            android:text="0" />
+
+        <TextView
+            android:id="@+id/textYAW"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="YAW"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/valueYAW"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="0deg"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/textView21"
+            android:layout_width="0sp"
+            android:layout_height="0sp"
+            android:layout_weight="1"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/textSatellite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="위성"
+            android:textSize="20sp"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/valueSatellite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="20sp"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/textView15"
+            android:layout_width="0sp"
+            android:layout_height="0sp"
+            android:layout_weight="2"
+            android:text="" />
+
+    </LinearLayout>
+
     <Button
-        android:id="@+id/button"
+        android:id="@+id/connectBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="127dp"
-        tools:layout_editor_absoluteY="306dp" />
+        android:onClick="onBtnConnectTap"
+        android:text="Connect"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>
