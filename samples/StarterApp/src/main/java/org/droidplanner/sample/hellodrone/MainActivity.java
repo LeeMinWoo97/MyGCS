@@ -275,7 +275,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             case AttributeEvent.HOME_UPDATED:
                 updateDistanceFromHome();
                 break;
-
             default:
                 // Log.i("DRONE_EVENT", event); //Uncomment to see events from the drone
                 break;

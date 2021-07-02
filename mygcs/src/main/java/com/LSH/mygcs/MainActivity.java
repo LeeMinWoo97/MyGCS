@@ -14,22 +14,32 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.naver.maps.geometry.LatLng;
+import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
+import com.naver.maps.map.overlay.LocationOverlay;
+import com.naver.maps.map.overlay.Marker;
+import com.naver.maps.map.overlay.OverlayImage;
+import com.naver.maps.map.util.FusedLocationSource;
 import com.o3dr.android.client.ControlTower;
 import com.o3dr.android.client.Drone;
 import com.o3dr.android.client.apis.VehicleApi;
 import com.o3dr.android.client.interfaces.DroneListener;
 import com.o3dr.android.client.interfaces.LinkListener;
 import com.o3dr.android.client.interfaces.TowerListener;
+import com.o3dr.services.android.lib.coordinate.LatLong;
 import com.o3dr.services.android.lib.drone.attribute.AttributeEvent;
 import com.o3dr.services.android.lib.drone.attribute.AttributeType;
 import com.o3dr.services.android.lib.drone.companion.solo.SoloAttributes;
 import com.o3dr.services.android.lib.drone.companion.solo.SoloState;
 import com.o3dr.services.android.lib.drone.connection.ConnectionParameter;
+import com.o3dr.services.android.lib.drone.mission.item.command.YawCondition;
 import com.o3dr.services.android.lib.drone.property.Altitude;
+import com.o3dr.services.android.lib.drone.property.Attitude;
 import com.o3dr.services.android.lib.drone.property.Battery;
+import com.o3dr.services.android.lib.drone.property.Gps;
 import com.o3dr.services.android.lib.drone.property.Speed;
 import com.o3dr.services.android.lib.drone.property.State;
 import com.o3dr.services.android.lib.drone.property.Type;
@@ -37,6 +47,7 @@ import com.o3dr.services.android.lib.drone.property.VehicleMode;
 import com.o3dr.services.android.lib.gcs.link.LinkConnectionStatus;
 import com.o3dr.services.android.lib.model.AbstractCommandListener;
 
+import java.text.AttributedCharacterIterator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements DroneListener, TowerListener, LinkListener, OnMapReadyCallback {
@@ -44,7 +55,11 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     private static final String TAG = MainActivity.class.getSimpleName();
     private NaverMap mNaverMap;
     private MapFragment mMapFragment;
+    private LocationOverlay mLocationOverlay;
     private Spinner mModeSelector;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
+    private FusedLocationSource locationSource;
+    private Marker dronePosition = new Marker();
     private Drone drone;
     private int droneType = Type.TYPE_UNKNOWN;
     private ControlTower controlTower;
@@ -61,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        locationSource =
+                new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
 
         FragmentManager fm = getSupportFragmentManager();
         mMapFragment = (MapFragment)fm.findFragmentById(R.id.map);
@@ -89,6 +107,31 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         });
 
         mainHandler = new Handler(getApplicationContext().getMainLooper());
+    }
+
+    @Override
+    public void onMapReady(@NonNull NaverMap naverMap) {
+        this.mNaverMap = naverMap;
+        naverMap.setMapType(NaverMap.MapType.Satellite);
+        //mLocationOverlay = naverMap.getLocationOverlay();
+        //mLocationOverlay.setVisible(true);
+        //mLocationOverlay.setIcon(OverlayImage.fromResource(R.drawable.location_overlay_icon));
+        naverMap.setLocationSource(locationSource);
+        naverMap.setLocationTrackingMode(LocationTrackingMode.NoFollow);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,  @NonNull int[] grantResults) {
+        if (locationSource.onRequestPermissionsResult(
+                requestCode, permissions, grantResults)) {
+            if (!locationSource.isActivated()) { // 권한 거부됨
+                mNaverMap.setLocationTrackingMode(LocationTrackingMode.None);
+            }
+            return;
+        }
+        super.onRequestPermissionsResult(
+                requestCode, permissions, grantResults);
     }
 
     @Override
@@ -198,6 +241,15 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             case AttributeEvent.BATTERY_UPDATED:
                 updateBattery();
 
+            case AttributeEvent.GPS_COUNT:
+                countGPS();
+
+            case AttributeEvent.ATTITUDE_UPDATED:
+                updateAttitude();
+
+            case AttributeEvent.GPS_POSITION:
+                updateGps();
+
             default:
                 // Log.i("DRONE_EVENT", event); //Uncomment to see events from the drone
                 break;
@@ -234,6 +286,33 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         TextView batteryView = (TextView) findViewById(R.id.valueVolt);
         Battery droneBattery = this.drone.getAttribute(AttributeType.BATTERY);
         batteryView.setText(String.format("%3.1f", droneBattery.getBatteryVoltage()) + "V");
+    }
+
+    protected void countGPS(){
+        TextView countGPS = (TextView) findViewById(R.id.valueSatellite);
+        Gps gps = this.drone.getAttribute(AttributeType.GPS);
+        countGPS.setText(String.format("%d", gps.getSatellitesCount()));
+    }
+
+    protected void updateAttitude(){
+        TextView viewYaw = (TextView) findViewById(R.id.valueYAW);
+        Attitude yaw = this.drone.getAttribute(AttributeType.ATTITUDE);
+        int yaw_360 = (int) yaw.getYaw();
+        if(yaw_360 < 0){
+            yaw_360 = 360 - Math.abs(yaw_360);
+            if(yaw_360 == 360) yaw_360 = 0;
+        }
+        viewYaw.setText(String.format("%d", yaw_360 ) + "deg");
+        //mLocationOverlay.setBearing(yaw_360);
+    }
+
+    protected void updateGps(){
+        dronePosition.setMap(null);
+        Gps gps = this.drone.getAttribute(AttributeType.GPS);
+        LatLong position = new LatLong(gps.getPosition());
+        dronePosition.setPosition(new LatLng(position.getLatitude(),position.getLongitude()));
+        dronePosition.setMap(mNaverMap);
+        //mLocationOverlay.setPosition(new LatLng(position.getLatitude(), position.getLongitude()));
     }
 
     private void checkSoloState() {
@@ -278,11 +357,5 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     private void runOnMainThread(Runnable runnable) {
         mainHandler.post(runnable);
-    }
-
-
-    @Override
-    public void onMapReady(@NonNull NaverMap naverMap) {
-        this.mNaverMap = naverMap;
     }
 }
