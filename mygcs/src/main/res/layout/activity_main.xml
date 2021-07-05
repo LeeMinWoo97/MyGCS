@@ -14,7 +14,9 @@
         tools:layout_editor_absoluteX="-206dp"
         tools:layout_editor_absoluteY="16dp" />
 0
+
     <LinearLayout
+        android:id="@+id/DroneState"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:background="#151515"
@@ -34,17 +36,17 @@
             android:id="@+id/textVolt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:layout_gravity="center_vertical"
             android:text="전압"
-            android:layout_gravity="center_vertical"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/valueVolt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:layout_gravity="center"
             android:text="0.0V"
-            android:layout_gravity="center"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/textView16"
@@ -57,17 +59,17 @@
             android:id="@+id/textMode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:layout_gravity="center"
             android:text="비행모드"
-            android:layout_gravity="center"/>
+            android:textSize="20sp" />
 
         <Spinner
             android:id="@+id/modeSelector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
             android:layout_gravity="center"
-            android:spinnerMode="dropdown"/>
+            android:spinnerMode="dropdown"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/textView17"
@@ -80,17 +82,17 @@
             android:id="@+id/textAltitude"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:layout_gravity="center"
             android:text="고도"
-            android:layout_gravity="center"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/valueAltitude"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:layout_gravity="center"
             android:text="0m"
-            android:layout_gravity="center"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/textView18"
@@ -103,17 +105,17 @@
             android:id="@+id/textSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:layout_gravity="center"
             android:text="속도"
-            android:layout_gravity="center"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/valueSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:layout_gravity="center"
             android:text="0m/s"
-            android:layout_gravity="center"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/textView19"
@@ -126,17 +128,17 @@
             android:id="@+id/textYAW"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:layout_gravity="center"
             android:text="YAW"
-            android:layout_gravity="center"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/valueYAW"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:layout_gravity="center"
             android:text="0deg"
-            android:layout_gravity="center"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/textView21"
@@ -149,17 +151,17 @@
             android:id="@+id/textSatellite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="위성"
-            android:textSize="20sp"
-            android:layout_gravity="center"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/valueSatellite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="0"
-            android:textSize="20sp"
-            android:layout_gravity="center"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/textView15"
@@ -178,4 +180,57 @@
         android:text="Connect"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/ARMBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="armButtonClick"
+        android:text="ARM"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/aboutAltitude"
+        android:layout_width="89dp"
+        android:layout_height="162dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="@+id/map"
+        app:layout_constraintTop_toBottomOf="@+id/DroneState">
+
+        <TextView
+            android:id="@+id/altitudeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/cardview_dark_background"
+            android:gravity="center"
+            android:text="이륙고도"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/altitudeValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/cardview_dark_background"
+            android:gravity="center"
+            android:text="3.0M"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/addAltitude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="addAltitude"
+            android:text="+ 0.5M"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/subAltitude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="subAltitude"
+            android:text="- 0.5M"
+            android:textSize="20sp" />
+    </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

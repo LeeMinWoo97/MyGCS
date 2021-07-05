@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,12 +20,14 @@ import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
+import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.LocationOverlay;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.o3dr.android.client.ControlTower;
 import com.o3dr.android.client.Drone;
+import com.o3dr.android.client.apis.ControlApi;
 import com.o3dr.android.client.apis.VehicleApi;
 import com.o3dr.android.client.interfaces.DroneListener;
 import com.o3dr.android.client.interfaces.LinkListener;
@@ -46,6 +49,7 @@ import com.o3dr.services.android.lib.drone.property.Type;
 import com.o3dr.services.android.lib.drone.property.VehicleMode;
 import com.o3dr.services.android.lib.gcs.link.LinkConnectionStatus;
 import com.o3dr.services.android.lib.model.AbstractCommandListener;
+import com.o3dr.services.android.lib.model.SimpleCommandListener;
 
 import java.text.AttributedCharacterIterator;
 import java.util.List;
@@ -64,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     private int droneType = Type.TYPE_UNKNOWN;
     private ControlTower controlTower;
     private final Handler handler = new Handler();
-
+    private double mAltitude = 3.0;
     private static final int DEFAULT_UDP_PORT = 14550;
     private static final int DEFAULT_USB_BAUD_RATE = 57600;
 
@@ -112,6 +116,9 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
         this.mNaverMap = naverMap;
+        UiSettings uiSettings = naverMap.getUiSettings();
+        uiSettings.setZoomControlEnabled(false);
+        uiSettings.setScaleBarEnabled(false);
         naverMap.setMapType(NaverMap.MapType.Satellite);
         //mLocationOverlay = naverMap.getLocationOverlay();
         //mLocationOverlay.setVisible(true);
@@ -207,9 +214,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
             case AttributeEvent.STATE_UPDATED:
             case AttributeEvent.STATE_ARMING:
-/*
                 updateArmButton();
- */
                 break;
 
             case AttributeEvent.TYPE_UPDATED:
@@ -253,6 +258,80 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             default:
                 // Log.i("DRONE_EVENT", event); //Uncomment to see events from the drone
                 break;
+        }
+    }
+
+    protected void updateArmButton() {
+        State vehicleState = this.drone.getAttribute(AttributeType.STATE);
+        Button armButton = (Button) findViewById(R.id.ARMBtn);
+
+        if (!this.drone.isConnected()) {
+            armButton.setVisibility(View.INVISIBLE);
+        } else {
+            armButton.setVisibility(View.VISIBLE);
+        }
+
+        if (vehicleState.isFlying()) {
+            // Land
+            armButton.setText("LAND");
+        } else if (vehicleState.isArmed()) {
+            // Take off
+            armButton.setText("TAKE OFF");
+        } else if (vehicleState.isConnected()) {
+            // Connected but not Armed
+            armButton.setText("ARM");
+        }
+    }
+
+    public void armButtonClick(View view) {
+        State vehicleState = this.drone.getAttribute(AttributeType.STATE);
+
+        if (vehicleState.isFlying()) {
+            // Land
+            VehicleApi.getApi(this.drone).setVehicleMode(VehicleMode.COPTER_LAND, new SimpleCommandListener() {
+                @Override
+                public void onError(int executionError) {
+                    alertUser("Unable to land the vehicle.");
+                }
+
+                @Override
+                public void onTimeout() {
+                    alertUser("Unable to land the vehicle.");
+                }
+            });
+        } else if (vehicleState.isArmed()) {
+            // Take off
+            ControlApi.getApi(this.drone).takeoff(mAltitude, new AbstractCommandListener() {
+
+                @Override
+                public void onSuccess() {
+                    alertUser("Taking off...");
+                }
+
+                @Override
+                public void onError(int i) {
+                    alertUser("Unable to take off.");
+                }
+
+                @Override
+                public void onTimeout() {
+                    alertUser("Unable to take off.");
+                }
+            });
+        }
+        else {
+            // Connected but not Armed
+            VehicleApi.getApi(this.drone).arm(true, false, new SimpleCommandListener() {
+                @Override
+                public void onError(int executionError) {
+                    alertUser("Unable to arm vehicle.");
+                }
+
+                @Override
+                public void onTimeout() {
+                    alertUser("Arming operation timed out.");
+                }
+            });
         }
     }
 
@@ -345,6 +424,18 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     @Override
     public void onTowerDisconnected() {
         alertUser("DroneKit-Android Interrupted");
+    }
+
+    public void addAltitude(View view){
+        if(mAltitude < 10.0) this.mAltitude = mAltitude + 0.5;
+        TextView altitude = (TextView) findViewById(R.id.altitudeValue);
+        altitude.setText(mAltitude + "M");
+    }
+
+    public void subAltitude(View view){
+        if(mAltitude > 3.0) this.mAltitude = mAltitude - 0.5;
+        TextView altitude = (TextView) findViewById(R.id.altitudeValue);
+        altitude.setText(mAltitude + "M");
     }
 
     // Helper methods
