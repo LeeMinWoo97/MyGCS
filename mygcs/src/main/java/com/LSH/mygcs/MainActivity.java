@@ -1,9 +1,11 @@
 package com.LSH.mygcs;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -161,11 +163,15 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     }
 
     public void onBtnConnectTap(View view) {
+        Button connetcButton = (Button) findViewById(R.id.connectBtn);
         if (this.drone.isConnected()) {
             this.drone.disconnect();
+            connetcButton.setText("Connect");
         } else {
-            ConnectionParameter connectionParams = ConnectionParameter.newUdpConnection(null);
+            ConnectionParameter connectionParams
+                    = ConnectionParameter.newUdpConnection(null);
             this.drone.connect(connectionParams);
+            connetcButton.setText("Disconnect");
         }
 
     }
@@ -285,7 +291,8 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     public void armButtonClick(View view) {
         State vehicleState = this.drone.getAttribute(AttributeType.STATE);
-
+        AlertDialog.Builder myAlertBuilder =
+                new AlertDialog.Builder(MainActivity.this);
         if (vehicleState.isFlying()) {
             // Land
             VehicleApi.getApi(this.drone).setVehicleMode(VehicleMode.COPTER_LAND, new SimpleCommandListener() {
@@ -301,37 +308,62 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             });
         } else if (vehicleState.isArmed()) {
             // Take off
-            ControlApi.getApi(this.drone).takeoff(mAltitude, new AbstractCommandListener() {
-
-                @Override
-                public void onSuccess() {
-                    alertUser("Taking off...");
-                }
-
-                @Override
-                public void onError(int i) {
-                    alertUser("Unable to take off.");
-                }
-
-                @Override
-                public void onTimeout() {
-                    alertUser("Unable to take off.");
+            myAlertBuilder.setTitle("이륙");
+            myAlertBuilder.setMessage("지정한 고도까지 이륙하시겠습니까?");
+            myAlertBuilder.setPositiveButton("확인",new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    ControlApi.getApi(drone).takeoff(mAltitude, new AbstractCommandListener() {
+                        @Override
+                        public void onSuccess() {
+                            alertUser("이륙 중");
+                        }
+                        @Override
+                        public void onError(int i) {
+                            alertUser("이륙할 수 없습니다.");
+                        }
+                        @Override
+                        public void onTimeout() {
+                            alertUser("이륙 준비시간이 초과되었습니다.");
+                        }
+                    });
                 }
             });
+            myAlertBuilder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(getApplicationContext(),"취소되었습니다",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+            myAlertBuilder.show();
         }
         else {
             // Connected but not Armed
-            VehicleApi.getApi(this.drone).arm(true, false, new SimpleCommandListener() {
-                @Override
-                public void onError(int executionError) {
-                    alertUser("Unable to arm vehicle.");
-                }
+            myAlertBuilder.setTitle("모터시동");
+            myAlertBuilder.setMessage("모터에 시동을 거시겠습니까?");
+            myAlertBuilder.setPositiveButton("확인",new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    VehicleApi.getApi(drone).arm(true, false, new SimpleCommandListener() {
+                        @Override
+                        public void onError(int executionError) {
+                            alertUser("시동을 걸 수 없습니다.");
+                        }
 
-                @Override
-                public void onTimeout() {
-                    alertUser("Arming operation timed out.");
+                        @Override
+                        public void onTimeout() {
+                            alertUser("시동 준비시간이 초과되었습니다");
+                        }
+                    });
                 }
             });
+            myAlertBuilder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(getApplicationContext(),"취소되었습니다",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+            myAlertBuilder.show();
         }
     }
 
