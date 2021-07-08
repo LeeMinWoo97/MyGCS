@@ -193,7 +193,7 @@
     <LinearLayout
         android:id="@+id/aboutAltitude"
         android:layout_width="89dp"
-        android:layout_height="162dp"
+        android:layout_height="147dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="@+id/map"
         app:layout_constraintTop_toBottomOf="@+id/DroneState">
@@ -231,6 +231,113 @@
             android:onClick="subAltitude"
             android:text="- 0.5M"
             android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mapOption"
+        android:layout_width="80dp"
+        android:layout_height="188dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/connectBtn">
+
+        <Button
+            android:id="@+id/mapSatellite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="setMapSatellite"
+            android:text="위성지도"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/mapTerrain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="setMapTerrain"
+            android:text="지형도"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/mapBasic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="setMapBasic"
+            android:text="일반지도"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="setMapOption"
+            android:text="위성지도" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/cadastral"
+        android:layout_width="80dp"
+        android:layout_height="140dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/mapOption">
+
+        <Button
+            android:id="@+id/cadastralOn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="setCadastralOn"
+            android:text="지적도On"
+            android:textSize="12dp"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/cadastralOff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="setCadastralOff"
+            android:text="지적도Off"
+            android:textSize="12dp"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/cadastralView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="setCadastral"
+            android:text="지적도Off"
+            android:textSize="12dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/cameraLock"
+        android:layout_width="80dp"
+        android:layout_height="140dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/cadastral">
+
+        <Button
+            android:id="@+id/cameraMove"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="setCameraMove"
+            android:text="맵 이동"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/cameraFix"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="setCameraFix"
+            android:text="맵 잠금"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/cameraView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="setCameraView"
+            android:text="맵 이동" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

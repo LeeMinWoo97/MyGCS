@@ -2,6 +2,7 @@ package com.LSH.mygcs;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.naver.maps.geometry.LatLng;
+import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
@@ -26,6 +28,7 @@ import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.LocationOverlay;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.OverlayImage;
+import com.naver.maps.map.overlay.PolylineOverlay;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.o3dr.android.client.ControlTower;
 import com.o3dr.android.client.Drone;
@@ -54,6 +57,7 @@ import com.o3dr.services.android.lib.model.AbstractCommandListener;
 import com.o3dr.services.android.lib.model.SimpleCommandListener;
 
 import java.text.AttributedCharacterIterator;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements DroneListener, TowerListener, LinkListener, OnMapReadyCallback {
@@ -66,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
     private FusedLocationSource locationSource;
     private Marker dronePosition = new Marker();
+    private Boolean cameraFix = false;
+    private ArrayList<LatLng> locationCollection = new ArrayList<LatLng>();
+    private PolylineOverlay polyline = new PolylineOverlay();
     private Drone drone;
     private int droneType = Type.TYPE_UNKNOWN;
     private ControlTower controlTower;
@@ -422,8 +429,22 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         Gps gps = this.drone.getAttribute(AttributeType.GPS);
         LatLong position = new LatLong(gps.getPosition());
         dronePosition.setPosition(new LatLng(position.getLatitude(),position.getLongitude()));
+        locationCollection.add(new LatLng(position.getLatitude(),position.getLongitude()));
+        if(locationCollection.size() > 2) drawPolyLine();
         dronePosition.setMap(mNaverMap);
+        if(cameraFix == true){
+            CameraUpdate cameraUpdate = CameraUpdate.scrollTo(new LatLng(position.getLatitude(),position.getLongitude()));
+            mNaverMap.moveCamera(cameraUpdate);
+        }
         //mLocationOverlay.setPosition(new LatLng(position.getLatitude(), position.getLongitude()));
+    }
+
+    protected void drawPolyLine(){
+        polyline.setCoords(locationCollection);
+        polyline.setCapType(PolylineOverlay.LineCap.Round);
+        polyline.setJoinType(PolylineOverlay.LineJoin.Round);
+        polyline.setColor(Color.WHITE);
+        polyline.setMap(mNaverMap);
     }
 
     private void checkSoloState() {
@@ -470,6 +491,66 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         altitude.setText(mAltitude + "M");
     }
 
+    public void setMapOption(View view){
+        doBtnVisible("mapSatellite","mapTerrain","mapBasic");
+    }
+
+    public void setCadastral(View view){
+        doBtnVisible("cadastralOn","cadastralOff");
+    }
+
+    public void setCameraView(View view){
+        doBtnVisible("cameraMove","cameraFix");
+    }
+
+    public void setMapSatellite(View view){
+        mNaverMap.setMapType(NaverMap.MapType.Satellite);
+        doBtnInvisible("mapSatellite","mapTerrain","mapBasic");
+        Button mapView = (Button) findViewById(R.id.mapView);
+        mapView.setText("위성지도");
+    }
+
+    public void setMapTerrain(View view){
+        mNaverMap.setMapType(NaverMap.MapType.Terrain);
+        doBtnInvisible("mapSatellite","mapTerrain","mapBasic");
+        Button mapView = (Button) findViewById(R.id.mapView);
+        mapView.setText("지형도");
+    }
+
+    public void setMapBasic(View view){
+        mNaverMap.setMapType(NaverMap.MapType.Basic);
+        doBtnInvisible("mapSatellite","mapTerrain","mapBasic");
+        Button mapView = (Button) findViewById(R.id.mapView);
+        mapView.setText("일반지도");
+    }
+
+    public void setCadastralOn(View view){
+        mNaverMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_CADASTRAL, true);
+        doBtnInvisible("cadastralOn","cadastralOff");
+        Button cadastralView = (Button) findViewById(R.id.cadastralView);
+        cadastralView.setText("지형도On");
+    }
+
+    public void setCadastralOff(View view){
+        mNaverMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_CADASTRAL, false);
+        doBtnInvisible("cadastralOn","cadastralOff");
+        Button cadastralView = (Button) findViewById(R.id.cadastralView);
+        cadastralView.setText("지형도Off");
+    }
+
+    public void setCameraMove(View view){
+        cameraFix = false;
+        doBtnInvisible("cameraMove","cameraFix");
+        Button cameraView = (Button) findViewById(R.id.cameraView);
+        cameraView.setText("맵 이동");
+    }
+
+    public void setCameraFix(View view){
+        cameraFix = true;
+        doBtnInvisible("cameraMove","cameraFix");
+        Button cameraView = (Button) findViewById(R.id.cameraView);
+        cameraView.setText("맵 잠금");
+    }
     // Helper methods
     // ==========================================================
 
@@ -481,4 +562,19 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     private void runOnMainThread(Runnable runnable) {
         mainHandler.post(runnable);
     }
+
+    protected void doBtnVisible(String...strings){
+        for(int i =0; i<strings.length; i++){
+            Button button = findViewById(getResources().getIdentifier(strings[i], "id", "com.LSH.mygcs"));
+            button.setVisibility(View.VISIBLE);
+        }
+    }
+
+    protected void doBtnInvisible(String...strings){
+        for(int i =0; i<strings.length; i++){
+            Button button = findViewById(getResources().getIdentifier(strings[i], "id", "com.LSH.mygcs"));
+            button.setVisibility(View.INVISIBLE);
+        }
+    }
+
 }
