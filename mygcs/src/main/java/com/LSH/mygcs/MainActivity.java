@@ -173,12 +173,10 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         Button connetcButton = (Button) findViewById(R.id.connectBtn);
         if (this.drone.isConnected()) {
             this.drone.disconnect();
-            connetcButton.setText("Connect");
         } else {
             ConnectionParameter connectionParams
                     = ConnectionParameter.newUdpConnection(null);
             this.drone.connect(connectionParams);
-            connetcButton.setText("Disconnect");
         }
 
     }
@@ -206,9 +204,11 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     @Override
     public void onDroneEvent(String event, Bundle extras) {
+        Button connetcButton = (Button) findViewById(R.id.connectBtn);
         switch (event) {
             case AttributeEvent.STATE_CONNECTED:
                 alertUser("Drone Connected");
+                connetcButton.setText("Disconnect");
 /*
                 updateConnectedButton(this.drone.isConnected());
                 updateArmButton();
@@ -219,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
             case AttributeEvent.STATE_DISCONNECTED:
                 alertUser("Drone Disconnected");
+                connetcButton.setText("Connect");
 /*
                 updateConnectedButton(this.drone.isConnected());
                 updateArmButton();
@@ -551,6 +552,12 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         Button cameraView = (Button) findViewById(R.id.cameraView);
         cameraView.setText("맵 잠금");
     }
+
+    public void clickClearBtn(View view){
+        polyline.setMap(null);
+        locationCollection.clear();
+    }
+
     // Helper methods
     // ==========================================================
 

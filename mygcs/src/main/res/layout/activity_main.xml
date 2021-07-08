@@ -13,7 +13,34 @@
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="-206dp"
         tools:layout_editor_absoluteY="16dp" />
-0
+    0
+
+    <Button
+        android:id="@+id/connectBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:onClick="onBtnConnectTap"
+        android:text="Connect"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/ARMBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="armButtonClick"
+        android:text="ARM"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/clearBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="46dp"
+        android:onClick="clickClearBtn"
+        android:text="Clear"
+        app:layout_constraintBottom_toTopOf="@+id/connectBtn"
+        app:layout_constraintEnd_toEndOf="@+id/map" />
 
     <LinearLayout
         android:id="@+id/DroneState"
@@ -171,24 +198,6 @@
             android:text="" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/connectBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onBtnConnectTap"
-        android:text="Connect"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/ARMBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="armButtonClick"
-        android:text="ARM"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/aboutAltitude"
