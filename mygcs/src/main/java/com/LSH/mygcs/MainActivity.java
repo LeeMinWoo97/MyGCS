@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -135,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         naverMap.setLocationSource(locationSource);
         naverMap.setLocationTrackingMode(LocationTrackingMode.NoFollow);
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -482,14 +484,18 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     public void addAltitude(View view){
         if(mAltitude < 10.0) this.mAltitude = mAltitude + 0.5;
+        /*
         TextView altitude = (TextView) findViewById(R.id.altitudeValue);
         altitude.setText(mAltitude + "M");
+         */
     }
 
     public void subAltitude(View view){
         if(mAltitude > 3.0) this.mAltitude = mAltitude - 0.5;
+        /*
         TextView altitude = (TextView) findViewById(R.id.altitudeValue);
         altitude.setText(mAltitude + "M");
+         */
     }
 
     public void setMapOption(View view){

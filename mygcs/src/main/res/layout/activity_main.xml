@@ -201,29 +201,17 @@
 
     <LinearLayout
         android:id="@+id/aboutAltitude"
-        android:layout_width="89dp"
-        android:layout_height="147dp"
+        android:layout_width="90dp"
+        android:layout_height="145dp"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="@+id/map"
+        app:layout_constraintEnd_toStartOf="@+id/missonLayout"
         app:layout_constraintTop_toBottomOf="@+id/DroneState">
 
-        <TextView
-            android:id="@+id/altitudeText"
+        <Button
+            android:id="@+id/viewAltitude"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/cardview_dark_background"
-            android:gravity="center"
-            android:text="이륙고도"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/altitudeValue"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/cardview_dark_background"
-            android:gravity="center"
-            android:text="3.0M"
-            android:textSize="20sp" />
+            android:text="이륙고도 3.0M" />
 
         <Button
             android:id="@+id/addAltitude"
@@ -231,7 +219,8 @@
             android:layout_height="wrap_content"
             android:onClick="addAltitude"
             android:text="+ 0.5M"
-            android:textSize="20sp" />
+            android:textSize="17dp"
+            android:visibility="invisible"/>
 
         <Button
             android:id="@+id/subAltitude"
@@ -239,7 +228,8 @@
             android:layout_height="wrap_content"
             android:onClick="subAltitude"
             android:text="- 0.5M"
-            android:textSize="20sp" />
+            android:textSize="17dp"
+            android:visibility="invisible"/>
     </LinearLayout>
 
     <LinearLayout
@@ -347,6 +337,116 @@
             android:layout_height="wrap_content"
             android:onClick="setCameraView"
             android:text="맵 이동" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="157dp"
+        android:layout_height="114dp"
+        app:layout_constraintStart_toStartOf="@+id/map"
+        app:layout_constraintTop_toBottomOf="@+id/DroneState" />
+
+    <LinearLayout
+        android:id="@+id/missonLayout"
+        android:layout_width="80dp"
+        android:layout_height="190dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="@+id/map"
+        app:layout_constraintTop_toBottomOf="@+id/DroneState">
+
+        <Button
+            android:id="@+id/viewMisson"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="임무"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/ABMisson"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="AB"
+            android:textSize="17dp"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/polygonMisson"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="다각형"
+            android:textSize="17dp"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/cancle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="취소"
+            android:textSize="17dp"
+            android:visibility="invisible"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/flightWidthLayout"
+        android:layout_width="80dp"
+        android:layout_height="145dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@+id/aboutAltitude"
+        app:layout_constraintTop_toBottomOf="@+id/DroneState">
+
+        <Button
+            android:id="@+id/viewFlightWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="비행폭 3.0M" />
+
+        <Button
+            android:id="@+id/addFlightWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="+ 0.5M"
+            android:textSize="17dp"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/subFlightWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="- 0.5M"
+            android:textSize="17dp"
+            android:visibility="invisible"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ABLayout"
+        android:layout_width="80dp"
+        android:layout_height="145dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@+id/flightWidthLayout"
+        app:layout_constraintTop_toBottomOf="@+id/DroneState">
+
+        <Button
+            android:id="@+id/ABView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="AB거리 30M" />
+
+        <Button
+            android:id="@+id/addAB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="+ 10M"
+            android:textSize="17dp"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/subAB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="- 10M"
+            android:textSize="17dp"
+            android:visibility="invisible"/>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
