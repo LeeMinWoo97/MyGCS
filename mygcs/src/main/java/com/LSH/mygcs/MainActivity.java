@@ -11,8 +11,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -83,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     private double mAltitude = 3.0;
     private double flightwidth = 3.0;
     private int ABdistance = 30;
+    ArrayList<String> textInRecycleerView = new ArrayList<>();
+    RecyclerView recyclerView;
     private static final int DEFAULT_UDP_PORT = 14550;
     private static final int DEFAULT_USB_BAUD_RATE = 57600;
 
@@ -125,6 +131,12 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         });
 
         mainHandler = new Handler(getApplicationContext().getMainLooper());
+
+        // 리사이클러뷰에 LinearLayoutManager 객체 지정.
+        recyclerView = findViewById(R.id.stateText);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this)) ;
+
+
     }
 
     @Override
@@ -144,8 +156,15 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         naverMap.setOnMapLongClickListener((point, coord) ->{
             target.setPosition(new LatLng(coord.latitude,coord.longitude));
             target.setMap(naverMap);
-            guidemode.DialogSimple(drone,new LatLong(coord.latitude,coord.longitude),this);
+            addRecyclerViewText("기체가 목표 지점으로 이동합니다.");
+            if(guidemode.DialogSimple(drone,new LatLong(coord.latitude,coord.longitude),this)){
+                addRecyclerViewText("기체가 목표지점에 도착하였습니다.");
+            }
+            else {
+                addRecyclerViewText("기체 이동 실패");
+            }
             target.setMap(null);
+
             }
         );
     }
@@ -202,16 +221,19 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             @Override
             public void onSuccess() {
                 alertUser("Vehicle mode change successful.");
+                addRecyclerViewText("모드 변경 성공");
             }
 
             @Override
             public void onError(int executionError) {
                 alertUser("Vehicle mode change failed: " + executionError);
+                addRecyclerViewText("모드 변경 실패");
             }
 
             @Override
             public void onTimeout() {
                 alertUser("Vehicle mode change timed out.");
+                addRecyclerViewText("모드 변경 시간 초과");
             }
         });
     }
@@ -223,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             case AttributeEvent.STATE_CONNECTED:
                 alertUser("Drone Connected");
                 connetcButton.setText("Disconnect");
+                addRecyclerViewText("드론 연결");
 /*
                 updateConnectedButton(this.drone.isConnected());
                 updateArmButton();
@@ -234,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             case AttributeEvent.STATE_DISCONNECTED:
                 alertUser("Drone Disconnected");
                 connetcButton.setText("Connect");
+                addRecyclerViewText("드론 연결 해제");
 /*
                 updateConnectedButton(this.drone.isConnected());
                 updateArmButton();
@@ -319,6 +343,11 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             // Land
             VehicleApi.getApi(this.drone).setVehicleMode(VehicleMode.COPTER_LAND, new SimpleCommandListener() {
                 @Override
+                public void onSuccess() {
+                    alertUser("착륙 중");
+                    addRecyclerViewText("기체 착륙");
+                }
+                @Override
                 public void onError(int executionError) {
                     alertUser("Unable to land the vehicle.");
                 }
@@ -338,6 +367,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
                         @Override
                         public void onSuccess() {
                             alertUser("이륙 중");
+                            addRecyclerViewText("기체 이륙");
                         }
                         @Override
                         public void onError(int i) {
@@ -366,6 +396,11 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             myAlertBuilder.setPositiveButton("확인",new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog, int which){
                     VehicleApi.getApi(drone).arm(true, false, new SimpleCommandListener() {
+                        @Override
+                        public void onSuccess() {
+                            alertUser("모터 시동");
+                            addRecyclerViewText("모터 시동");
+                        }
                         @Override
                         public void onError(int executionError) {
                             alertUser("시동을 걸 수 없습니다.");
@@ -525,28 +560,28 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     }
 
     public void addABDistance(View view){
-        this.ABdistance = ABdistance + 10;
+        if(this.ABdistance < 100) this.ABdistance = this.ABdistance + 10;
         doBtnInvisible("addAB","subAB");
         Button altitude = (Button) findViewById(R.id.ABView);
         altitude.setText("AB거리 " + ABdistance + "M");
     }
 
     public void subABDistance(View view){
-        this.ABdistance = ABdistance - 10;
+        if(this.ABdistance > 10) this.ABdistance = this.ABdistance - 10;
         doBtnInvisible("addAB","subAB");
         Button altitude = (Button) findViewById(R.id.ABView);
         altitude.setText("AB거리 " + ABdistance + "M");
     }
 
     public void addFlightWidth(View view){
-        this.flightwidth = flightwidth + 0.5;
+        if(this.flightwidth < 10) this.flightwidth = this.flightwidth + 0.5;
         doBtnInvisible("addFlightWidth","subFlightWidth");
         Button altitude = (Button) findViewById(R.id.viewFlightWidth);
         altitude.setText("비행폭 " + flightwidth + "M");
     }
 
     public void subFlightWidth(View view){
-        this.flightwidth = flightwidth - 0.5;
+        if(this.flightwidth > 1) this.flightwidth = this.flightwidth - 0.5;
         doBtnInvisible("addFlightWidth","subFlightWidth");
         Button altitude = (Button) findViewById(R.id.viewFlightWidth);
         altitude.setText("비행폭 " + flightwidth + "M");
@@ -566,6 +601,8 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
 
     public void cancleChooseMisson(View view){
         doBtnInvisible("ABMisson","polygonMisson","cancle");
+        Button altitude = (Button) findViewById(R.id.viewMisson);
+        altitude.setText("임무");
     }
 
     public void setMapOption(View view){
@@ -632,8 +669,17 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     public void clickClearBtn(View view){
         polyline.setMap(null);
         locationCollection.clear();
+        textInRecycleerView.clear();
+        recyclerViewText adapter = new recyclerViewText(textInRecycleerView) ;
+        recyclerView.setAdapter(adapter) ;
     }
 
+    public void addRecyclerViewText(String msg){
+        textInRecycleerView.add(msg);
+        // 리사이클러뷰에 객체 지정.
+        recyclerViewText adapter = new recyclerViewText(textInRecycleerView) ;
+        recyclerView.setAdapter(adapter) ;
+    }
 
     // Helper methods
     // ==========================================================
@@ -667,44 +713,54 @@ class GuideMode {
     //static LatLng mGuidedPoint; //가이드모드 목적지 저장
     //static Marker mMarkerGuide = new com.naver.maps.map.overlay.Marker(); //GCS 위치 표시마커 옵션
     //static OverlayImage guideIcon = OverlayImage.fromResource(R.drawable.marker_guide);
-    static void DialogSimple(final Drone drone, final LatLong point, Context main) {
+    static Boolean DialogSimple(final Drone drone, final LatLong point, Context main) {
         State vehicleState = drone.getAttribute(AttributeType.STATE);
         if (vehicleState.isFlying()) {
-            AlertDialog.Builder alt_bld = new AlertDialog.Builder(main);
-            alt_bld.setMessage("확인하시면 가이드모드로 전환후 기체가 이동합니다.").setCancelable(false).setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    // Action for 'Yes' Button
-                    VehicleApi.getApi(drone).setVehicleMode(VehicleMode.COPTER_GUIDED,
-                            new AbstractCommandListener() {
-                                @Override
-                                public void onSuccess() {
-                                    ControlApi.getApi(drone).goTo(point, true, null);
-                                }
+            State vehiclemode = drone.getAttribute(AttributeType.STATE);
+            VehicleMode dronemode = vehiclemode.getVehicleMode();
+            if(dronemode == VehicleMode.COPTER_GUIDED) {
+                AlertDialog.Builder alt_bld = new AlertDialog.Builder(main);
+                alt_bld.setMessage("확인하시면 가이드모드로 전환후 기체가 이동합니다.").setCancelable(false).setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Action for 'Yes' Button
+                        VehicleApi.getApi(drone).setVehicleMode(VehicleMode.COPTER_GUIDED,
+                                new AbstractCommandListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        ControlApi.getApi(drone).goTo(point, true, null);
+                                    }
 
-                                @Override
-                                public void onError(int i) {
+                                    @Override
+                                    public void onError(int i) {
 
-                                }
-                                @Override
-                                public void onTimeout() {
+                                    }
 
-                                }
-                            });
-                }
-            }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
-            AlertDialog alert = alt_bld.create();
-            // Title for AlertDialog
-            alert.setTitle("가이드 비행");
-            // Icon for AlertDialog
-            //alert.setIcon(R.drawable.drone);
-            alert.show();
+                                    @Override
+                                    public void onTimeout() {
+
+                                    }
+                                });
+                    }
+                }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+                AlertDialog alert = alt_bld.create();
+                // Title for AlertDialog
+                alert.setTitle("가이드 비행");
+                // Icon for AlertDialog
+                //alert.setIcon(R.drawable.drone);
+                alert.show();
+            }
+            else {
+                ControlApi.getApi(drone).goTo(point, true, null);
+            }
             while(CheckGoal(drone,new LatLng(point.getLatitude(),point.getLongitude())) == false){ }
             VehicleApi.getApi(drone).setVehicleMode(VehicleMode.COPTER_LOITER);
+            return true;
         }
+        return  false;
     }
 
     public static boolean CheckGoal(final Drone drone, LatLng recentLatLng) {
@@ -712,5 +768,52 @@ class GuideMode {
         LatLng target = new LatLng(guidedState.getCoordinate().getLatitude(),
                 guidedState.getCoordinate().getLongitude());
         return target.distanceTo(recentLatLng) <= 1;
+    }
+}
+
+class recyclerViewText extends RecyclerView.Adapter<recyclerViewText.ViewHolder> {
+
+    private ArrayList<String> mData = null ;
+
+    // 아이템 뷰를 저장하는 뷰홀더 클래스.
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView textView1 ;
+
+        ViewHolder(View itemView) {
+            super(itemView) ;
+
+            // 뷰 객체에 대한 참조. (hold strong reference)
+            textView1 = itemView.findViewById(R.id.text) ;
+        }
+    }
+
+    // 생성자에서 데이터 리스트 객체를 전달받음.
+    recyclerViewText(ArrayList<String> list) {
+        mData = list ;
+    }
+
+    // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
+    @Override
+    public recyclerViewText.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Context context = parent.getContext() ;
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) ;
+
+        View view = inflater.inflate(R.layout.item_recycler, parent, false) ;
+        recyclerViewText.ViewHolder vh = new recyclerViewText.ViewHolder(view) ;
+
+        return vh ;
+    }
+
+    // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
+    @Override
+    public void onBindViewHolder(recyclerViewText.ViewHolder holder, int position) {
+        String text = mData.get(position) ;
+        holder.textView1.setText(text) ;
+    }
+
+    // getItemCount() - 전체 데이터 갯수 리턴.
+    @Override
+    public int getItemCount() {
+        return mData.size() ;
     }
 }
