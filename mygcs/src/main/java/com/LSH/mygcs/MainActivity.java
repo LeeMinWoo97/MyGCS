@@ -153,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         //mLocationOverlay.setIcon(OverlayImage.fromResource(R.drawable.location_overlay_icon));
         naverMap.setLocationSource(locationSource);
         naverMap.setLocationTrackingMode(LocationTrackingMode.NoFollow);
+        //dronePosition.setIcon(OverlayImage.fromResource(R.drawable.drone));
         naverMap.setOnMapLongClickListener((point, coord) ->{
             target.setPosition(new LatLng(coord.latitude,coord.longitude));
             target.setMap(naverMap);
@@ -465,12 +466,13 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     protected void updateAttitude(){
         TextView viewYaw = (TextView) findViewById(R.id.valueYAW);
         Attitude yaw = this.drone.getAttribute(AttributeType.ATTITUDE);
-        int yaw_360 = (int) yaw.getYaw();
+        float yaw_360 = (float) yaw.getYaw();
         if(yaw_360 < 0){
             yaw_360 = 360 - Math.abs(yaw_360);
             if(yaw_360 == 360) yaw_360 = 0;
         }
-        viewYaw.setText(String.format("%d", yaw_360 ) + "deg");
+        viewYaw.setText(String.format("%d", (int) yaw_360 ) + "deg");
+        dronePosition.setAngle(yaw_360);
         //mLocationOverlay.setBearing(yaw_360);
     }
 
