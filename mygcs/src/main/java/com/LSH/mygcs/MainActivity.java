@@ -2,7 +2,9 @@ package com.LSH.mygcs;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +25,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.LSH.mygcs.activites.helpers.BluetoothDevicesActivity;
+import com.LSH.mygcs.utils.TLogUtils;
+import com.LSH.mygcs.utils.prefs.DroidPlannerPrefs;
 import com.MAVLink.ardupilotmega.CRC;
 import com.MAVLink.enums.MAV_AUTOPILOT;
 import com.naver.maps.geometry.LatLng;
@@ -47,6 +53,7 @@ import com.o3dr.services.android.lib.drone.attribute.AttributeType;
 import com.o3dr.services.android.lib.drone.companion.solo.SoloAttributes;
 import com.o3dr.services.android.lib.drone.companion.solo.SoloState;
 import com.o3dr.services.android.lib.drone.connection.ConnectionParameter;
+import com.o3dr.services.android.lib.drone.connection.ConnectionType;
 import com.o3dr.services.android.lib.drone.property.Altitude;
 import com.o3dr.services.android.lib.drone.property.Attitude;
 import com.o3dr.services.android.lib.drone.property.Battery;
@@ -88,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     private static final int DEFAULT_USB_BAUD_RATE = 57600;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
     private final Handler handler = new Handler();
+
+    ConnectionParameter connParams;
 
     Handler mainHandler;
 
@@ -524,9 +533,13 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         if (this.drone.isConnected()) {
             this.drone.disconnect();
         } else {
+            /*
             ConnectionParameter connectionParams
                     = ConnectionParameter.newUdpConnection(null);
             this.drone.connect(connectionParams);
+
+             */
+            this.drone.connect(connParams);
         }
 
     }
@@ -675,6 +688,35 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
         recyclerViewText adapter = new recyclerViewText(mTextInRecycleerView) ;
         mRecyclerView.setAdapter(adapter) ;
     }
+
+    public void tapTestBTN(View view){
+            /*
+            ConnectionParameter connectionParams
+                    = ConnectionParameter.newUdpConnection(null);
+            this.drone.connect(connectionParams);
+
+             */
+            DroidPlannerPrefs mPrefs = DroidPlannerPrefs.getInstance(getApplicationContext());
+
+            String btAddress = mPrefs.getBluetoothDeviceAddress();
+            final @ConnectionType.Type int connectionType = mPrefs.getConnectionParameterType();
+
+            Uri tlogLoggingUri = TLogUtils.getTLogLoggingUri(getApplicationContext(),
+                    connectionType, System.currentTimeMillis());
+
+            final long EVENTS_DISPATCHING_PERIOD = 200L; //MS
+
+            if (TextUtils.isEmpty(btAddress)) {
+                connParams = null;
+                startActivity(new Intent(getApplicationContext(), BluetoothDevicesActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+            } else {
+                connParams = ConnectionParameter.newBluetoothConnection(btAddress,
+                        tlogLoggingUri, EVENTS_DISPATCHING_PERIOD);
+            }
+
+        }
+    
 
     //리사이클러뷰 지정
 
