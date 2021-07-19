@@ -19,7 +19,7 @@
         android:id="@+id/connectBtn"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
-        android:onClick="onBtnConnectTap"
+        android:onClick="tapConnectBTN"
         android:text="Connect"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -28,7 +28,7 @@
         android:id="@+id/ARMBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="armButtonClick"
+        android:onClick="tapArmBTN"
         android:text="ARM"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -37,7 +37,7 @@
         android:id="@+id/clearBtn"
         android:layout_width="wrap_content"
         android:layout_height="46dp"
-        android:onClick="clickClearBtn"
+        android:onClick="tapClearBtn"
         android:text="Clear"
         app:layout_constraintBottom_toTopOf="@+id/connectBtn"
         app:layout_constraintEnd_toEndOf="@+id/map" />
@@ -211,14 +211,14 @@
             android:id="@+id/viewAltitude"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="tapAltitude"
+            android:onClick="tapAltitudeBTN"
             android:text="이륙고도 3.0M" />
 
         <Button
             android:id="@+id/addAltitude"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="addAltitude"
+            android:onClick="tapAddAltitudeBTN"
             android:text="+ 0.5M"
             android:textSize="17dp"
             android:visibility="invisible" />
@@ -227,7 +227,7 @@
             android:id="@+id/subAltitude"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="subAltitude"
+            android:onClick="tapSubAltitudeBTN"
             android:text="- 0.5M"
             android:textSize="17dp"
             android:visibility="invisible" />
@@ -245,7 +245,7 @@
             android:id="@+id/mapSatellite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="setMapSatellite"
+            android:onClick="tapSetMapSatelliteBTN"
             android:text="위성지도"
             android:visibility="invisible" />
 
@@ -253,7 +253,7 @@
             android:id="@+id/mapTerrain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="setMapTerrain"
+            android:onClick="tapSetMapTerrainBTN"
             android:text="지형도"
             android:visibility="invisible" />
 
@@ -261,7 +261,7 @@
             android:id="@+id/mapBasic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="setMapBasic"
+            android:onClick="tapSetMapBasicBTN"
             android:text="일반지도"
             android:visibility="invisible" />
 
@@ -269,7 +269,7 @@
             android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="setMapOption"
+            android:onClick="tapSetMapOptionBTN"
             android:text="위성지도" />
     </LinearLayout>
 
@@ -285,7 +285,7 @@
             android:id="@+id/cadastralOn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="setCadastralOn"
+            android:onClick="tapSetCadastralOnBTN"
             android:text="지적도On"
             android:textSize="12dp"
             android:visibility="invisible" />
@@ -294,7 +294,7 @@
             android:id="@+id/cadastralOff"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="setCadastralOff"
+            android:onClick="tapSetCadastralOffBTN"
             android:text="지적도Off"
             android:textSize="12dp"
             android:visibility="invisible" />
@@ -303,7 +303,7 @@
             android:id="@+id/cadastralView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="setCadastral"
+            android:onClick="tapSetCadastralBTN"
             android:text="지적도Off"
             android:textSize="12dp" />
     </LinearLayout>
@@ -320,7 +320,7 @@
             android:id="@+id/cameraMove"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="setCameraMove"
+            android:onClick="tapSetCameraMoveBTN"
             android:text="맵 이동"
             android:visibility="invisible" />
 
@@ -328,7 +328,7 @@
             android:id="@+id/cameraFix"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="setCameraFix"
+            android:onClick="tapSetCameraFixBTN"
             android:text="맵 잠금"
             android:visibility="invisible" />
 
@@ -336,7 +336,7 @@
             android:id="@+id/cameraView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="setCameraView"
+            android:onClick="tapSetCameraViewBTN"
             android:text="맵 이동" />
     </LinearLayout>
 
@@ -359,7 +359,7 @@
             android:id="@+id/viewMisson"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:onClick="tapMisson"
+            android:onClick="tapMissonBTN"
             android:text="임무"
             android:textSize="20dp" />
 
@@ -367,7 +367,7 @@
             android:id="@+id/ABMisson"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="chooseMissonAB"
+            android:onClick="tapChooseMissonABBTN"
             android:text="AB"
             android:textSize="17dp"
             android:visibility="invisible" />
@@ -376,7 +376,7 @@
             android:id="@+id/polygonMisson"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="chooseMissonPolygon"
+            android:onClick="tapChooseMissonPolygonBTN"
             android:text="다각형"
             android:textSize="17dp"
             android:visibility="invisible" />
@@ -385,7 +385,7 @@
             android:id="@+id/cancle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="cancleChooseMisson"
+            android:onClick="tapCancleChooseMissonBTN"
             android:text="취소"
             android:textSize="17dp"
             android:visibility="invisible" />
@@ -404,14 +404,14 @@
             android:id="@+id/viewFlightWidth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="tapFlightWidth"
+            android:onClick="tapFlightWidthBTN"
             android:text="비행폭 3.0M" />
 
         <Button
             android:id="@+id/addFlightWidth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="addFlightWidth"
+            android:onClick="tapAddFlightWidthBTN"
             android:text="+ 0.5M"
             android:textSize="17dp"
             android:visibility="invisible" />
@@ -420,7 +420,7 @@
             android:id="@+id/subFlightWidth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="subFlightWidth"
+            android:onClick="tapSubFlightWidthBTN"
             android:text="- 0.5M"
             android:textSize="17dp"
             android:visibility="invisible" />
@@ -439,14 +439,14 @@
             android:id="@+id/ABView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="tapAB"
+            android:onClick="tapABBTN"
             android:text="AB거리 30M" />
 
         <Button
             android:id="@+id/addAB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="addABDistance"
+            android:onClick="tapAddABDistanceBTN"
             android:text="+ 10M"
             android:textSize="17dp"
             android:visibility="invisible" />
@@ -455,7 +455,7 @@
             android:id="@+id/subAB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="subABDistance"
+            android:onClick="tapSubABDistanceBTN"
             android:text="- 10M"
             android:textSize="17dp"
             android:visibility="invisible" />
