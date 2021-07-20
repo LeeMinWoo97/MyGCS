@@ -30,6 +30,7 @@ import com.LSH.mygcs.utils.TLogUtils;
 import com.LSH.mygcs.utils.prefs.DroidPlannerPrefs;
 import com.MAVLink.ardupilotmega.CRC;
 import com.MAVLink.enums.MAV_AUTOPILOT;
+import com.MAVLink.enums.MAV_CMD;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.LocationTrackingMode;
@@ -54,6 +55,7 @@ import com.o3dr.services.android.lib.drone.companion.solo.SoloAttributes;
 import com.o3dr.services.android.lib.drone.companion.solo.SoloState;
 import com.o3dr.services.android.lib.drone.connection.ConnectionParameter;
 import com.o3dr.services.android.lib.drone.connection.ConnectionType;
+import com.o3dr.services.android.lib.drone.mission.item.spatial.Waypoint;
 import com.o3dr.services.android.lib.drone.property.Altitude;
 import com.o3dr.services.android.lib.drone.property.Attitude;
 import com.o3dr.services.android.lib.drone.property.Battery;
@@ -709,7 +711,6 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
             if (TextUtils.isEmpty(btAddress)) {
                 connParams = null;
                 startActivity(new Intent(getApplicationContext(), BluetoothDevicesActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-
             } else {
                 connParams = ConnectionParameter.newBluetoothConnection(btAddress,
                         tlogLoggingUri, EVENTS_DISPATCHING_PERIOD);
@@ -762,6 +763,7 @@ class GuideMode {
     static Boolean DialogSimple(final Drone drone, final LatLong point, Context main) {
         State vehicleState = drone.getAttribute(AttributeType.STATE);
         if (vehicleState.isFlying()) {
+            
             State vehiclemode = drone.getAttribute(AttributeType.STATE);
             VehicleMode dronemode = vehiclemode.getVehicleMode();
             if(dronemode == VehicleMode.COPTER_GUIDED) {
