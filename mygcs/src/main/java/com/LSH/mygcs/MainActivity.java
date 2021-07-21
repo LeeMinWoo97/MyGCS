@@ -547,55 +547,64 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     }
 
     public void tapABBTN(View view){
-        doBtnVisible("addAB","subAB");
+        Button addAB = (Button) findViewById(R.id.addAB);
+        if(addAB.getVisibility() == view.VISIBLE){
+            doBtnInvisible("addAB","subAB");
+        }else{
+            doBtnVisible("addAB","subAB");
+        }
     }
 
     public void tapAddABDistanceBTN(View view){
         if(this.mABdistance < 100) this.mABdistance = this.mABdistance + 10;
-        doBtnInvisible("addAB","subAB");
         Button altitude = (Button) findViewById(R.id.ABView);
         altitude.setText("AB거리 " + mABdistance + "M");
     }
 
     public void tapSubABDistanceBTN(View view){
         if(this.mABdistance > 10) this.mABdistance = this.mABdistance - 10;
-        doBtnInvisible("addAB","subAB");
         Button altitude = (Button) findViewById(R.id.ABView);
         altitude.setText("AB거리 " + mABdistance + "M");
     }
 
     public void tapFlightWidthBTN(View view){
-        doBtnVisible("addFlightWidth","subFlightWidth");
+        Button addFlightWidth = (Button) findViewById(R.id.addFlightWidth);
+        if(addFlightWidth.getVisibility() == view.VISIBLE){
+            doBtnInvisible("addFlightWidth","subFlightWidth");
+        }else{
+            doBtnVisible("addFlightWidth","subFlightWidth");
+        }
     }
 
     public void tapAddFlightWidthBTN(View view){
         if(this.mFlightwidth < 10) this.mFlightwidth = this.mFlightwidth + 0.5;
-        doBtnInvisible("addFlightWidth","subFlightWidth");
         Button altitude = (Button) findViewById(R.id.viewFlightWidth);
         altitude.setText("비행폭 " + mFlightwidth + "M");
     }
 
     public void tapSubFlightWidthBTN(View view){
         if(this.mFlightwidth > 1) this.mFlightwidth = this.mFlightwidth - 0.5;
-        doBtnInvisible("addFlightWidth","subFlightWidth");
         Button altitude = (Button) findViewById(R.id.viewFlightWidth);
         altitude.setText("비행폭 " + mFlightwidth + "M");
     }
 
     public void tapAltitudeBTN(View view){
-        doBtnVisible("addAltitude","subAltitude");
+        Button addAltitude = (Button) findViewById(R.id.addAltitude);
+        if(addAltitude.getVisibility() == view.VISIBLE){
+            doBtnInvisible("addAltitude","subAltitude");
+        }else{
+            doBtnVisible("addAltitude","subAltitude");
+        }
     }
 
     public void tapAddAltitudeBTN(View view){
         if(mAltitude < 10.0) this.mAltitude = mAltitude + 0.5;
-        doBtnInvisible("addAltitude","subAltitude");
         Button altitude = (Button) findViewById(R.id.viewAltitude);
         altitude.setText("이륙고도 " + mAltitude + "M");
     }
 
     public void tapSubAltitudeBTN(View view){
         if(mAltitude > 3.0) this.mAltitude = mAltitude - 0.5;
-        doBtnInvisible("addAltitude","subAltitude");
         Button altitude = (Button) findViewById(R.id.viewAltitude);
         altitude.setText("이륙고도 " + mAltitude + "M");
     }
@@ -763,7 +772,6 @@ class GuideMode {
     static Boolean DialogSimple(final Drone drone, final LatLong point, Context main) {
         State vehicleState = drone.getAttribute(AttributeType.STATE);
         if (vehicleState.isFlying()) {
-            
             State vehiclemode = drone.getAttribute(AttributeType.STATE);
             VehicleMode dronemode = vehiclemode.getVehicleMode();
             if(dronemode == VehicleMode.COPTER_GUIDED) {
